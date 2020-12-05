@@ -1,2 +1,3 @@
-*json
-.idea
+*.json
+/.idea
+*.csv
