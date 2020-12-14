@@ -1,2 +1,2 @@
 from data_utils import *
-from model import SVM
+from model import BiLSTM

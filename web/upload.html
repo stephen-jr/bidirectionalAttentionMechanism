@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aspect Sentiment Analysis Tool</title>
+  <link rel="stylesheet" href="css/animate.min.css">
+  <link rel="stylesheet" href="css/foundation.min.css">
+  <link rel="stylesheet" href="css/sheet.css" />
+</head>
+<body>
+  <main class="site__main">
+    <section class="site__section align text--center site__section--start">
+      <div class="grid">
+        <h1 class="animation fadeInRight">What do you want to to</h1>
+        <div class="row">
+          <!-- <div class="upld button button--primary button--rounded animation fadeInUp">
+            <a style="cursor: pointer;">Predict on Text Data</a>
+            <input id="upload" style="cursor: pointer;" type="file" accept=".csv" />
+          </div> -->
+          <div class="row">
+            <input type="text" id="iput">
+            <br>
+            <a href="#" class="button button--primary button--rounded animation fadeInDown upld">Predict on Text</a>
+          </div>
+          <!-- <a href="#" class="button button--primary button--rounded animation fadeInDown">Proceed</a> -->
+        </div>
+      </div>
+    </section>
+  </main>
+  <section id="table" style="text-align: center; background-color: black; padding: 20px;">
+    <div class="row">
+      <div id="file_table">
+        <h4>File Preview</h4>
+        <div id="tbl" style="overflow-x: scroll;"></div>
+      </div>
+      <div class="md">
+        <div id="insights_table" style="display: none;">
+          <h4>Insights Summary</h4>
+          <div id="tbl"></div>
+        </div>
+        &nbsp;
+        <br>
+        <div id="metrics_table" style="display: none;">
+          <h4>Model Metrics</h4>
+          <div id="tbl"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script type="text/javascript" src="/eel.js"></script>
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/papaparse.min.js"></script>
+  <script type="text/javascript" src="js/main.js"></script>
+  <script>
+    $(document).ready(function () {
+          $('#upload').on('change', upload);
+          $('#next').hide();
+          $('.box').hide();
+          $('#loader').hide();
+          $('#message').hide();
+          $('#table').hide();
+          $('#next').bind('click', processData);
+    });
+  </script>
+</body>
+</html>
