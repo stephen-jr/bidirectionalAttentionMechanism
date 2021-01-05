@@ -1,16 +1,16 @@
-from model import BiLSTM
+from _class import *
+from _utils import prepare_data
 
-model = BiLSTM(variant='new', _dir=None)
-# model = BiLSTM(variant='load', _dir='models/2020-12-17')
-model.input_data(variant='train', path='data/train.csv')
-# model.input_data(variant='predict', path='data/train.csv')
-model.tokenize(variant='train', text=None)
-# model.tokenize(variant='predict', text=None)
-# tokenized_text =  model.tokenize(text='I love Bidirectional LSTM Networks with Self Attention')
-model.create_model(embedding=True)
-# model.create_model(embedding=False)
-history, train_accuracy, train_precision, train_recall, train_fscore = model.train()
-model.create_checkpoint()
-test_accuracy, test_precision, test_recall, test_fscore = model.validate()
-prediction = model.predict(data='I love Bidirctional LSTM Networks')
-# prediction = model.predict(internal=True)  # Predict on inputed predict data
+
+def main():
+    DATAPATH = 'data/train.csv'
+    X_TRAIN, Y_TRAIN, X_TEST, Y_TEST, MAX_WORD_FEATURE, SEQUENCE_MAX_LEN = prepare_data(DATAPATH)
+    model = NN(SEQUENCE_MAX_LEN, MAX_WORD_FEATURE, 100, 64)
+    model.create()
+    train_history = model.train(X_TRAIN, Y_TRAIN, 128, epochs=10)
+    validation_report = model.validate(X_TEST, Y_TEST)
+    model.plot_metrics(train_history)
+
+
+if __name__ == '__main__':
+    main()
