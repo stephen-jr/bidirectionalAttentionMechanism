@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aspect Sentiment Analysis Tool</title>
+  <link rel="stylesheet" href="css/bootstrap.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main class="site__main">
+    <section class="site__section site__section--start align text--center">
+      <div class="grid">
+        <h1 class="fadeInRight">Upload Text Data to be Analysed</h1>
+        <div class="upld button button--primary button--rounded animation fadeInUp">
+          <a style="cursor: pointer;">Upload</a>
+          <input id="upload" style="cursor: pointer;" type="file" accept=".csv" />
+        </div>
+        &nbsp;
+        <br>
+        <a href="#" id="next" class="button button--primary button--rounded animation">Process</a>
+        <p id="message">Find a preview of your file below</p>
+        <p id="loader"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            style="margin:auto;background:none;display:inline-block;" width="20px" height="20px" viewBox="0 0 100 100"
+            preserveAspectRatio="xMidYMid">
+            <circle cx="50" cy="50" fill="none" stroke="#fff" stroke-width="14" r="45"
+              stroke-dasharray="164.93361431346415 56.97787143782138" transform="rotate(95.2106 50 50)">
+              <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s"
+                values="0 50 50;360 50 50" keyTimes="0;1"></animateTransform>
+            </circle>
+          </svg></p>
+      </div>
+    </section>
+  </main>
+  <section id="table" style="text-align: center; background-color: black; padding: 20px; overflow-x: scroll;">
+    <div class="row">
+      <div id="file_table">
+        <h4>File Preview</h4>
+        <div id="tbl"></div>
+      </div>
+      <div class="md">
+        <div id="insights_table" style="display: none;">
+          <h4>Insights Summary</h4>
+          <div id="tbl"></div>
+        </div>
+        &nbsp;
+        <br>
+        <div id="metrics_table" style="display: none;">
+          <h4>Model Metrics</h4>
+          <div id="tbl"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script type="text/javascript" src="/eel.js"></script>
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/papaparse.min.js"></script>
+  <script type="text/javascript" src="js/main.js"></script>
+  <script>
+    $(document).ready(function () {
+          $('#upload').on('change', upload);
+          $('#next').hide();
+          $('.box').hide();
+          $('#loader').hide();
+          $('#message').hide();
+          $('#table').hide();
+          $('#next').bind('click', processData);
+    });
+  </script>
+</body>
+</html>
