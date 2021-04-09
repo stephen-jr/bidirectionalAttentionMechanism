@@ -111,7 +111,7 @@ class BiLSTM:
         x = y(x)
         x = Dense(1, activation='sigmoid')(x)
         self.model = Model(model_input, x)
-        self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=metrics)
+        self.model.compile(optimizer='adam', loss='binary_crossentropy', metrics=metrics)
         self.model.summary()
 
     def train(self):

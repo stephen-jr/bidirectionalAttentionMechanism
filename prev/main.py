@@ -1,4 +1,4 @@
-from model import BiLSTM
+from .model import BiLSTM
 
 model = BiLSTM(variant='new', _dir=None)
 # model = BiLSTM(variant='load', _dir='models/2020-12-17')

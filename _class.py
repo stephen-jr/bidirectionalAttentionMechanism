@@ -1,4 +1,21 @@
 from imports import *
+from _utils import clean_text
+
+
+class Attention(Model):
+    def __init__(self, units):
+        super(Attention, self).__init__()
+        self.W1 = tf.keras.layers.Dense(units)
+        self.W2 = tf.keras.layers.Dense(units)
+        self.V = tf.keras.layers.Dense(1)
+
+    def call(self, features, hidden):
+        hidden_with_time_axis = tf.expand_dims(hidden, 1)
+        score = tf.nn.tanh(self.W1(features) + self.W2(hidden_with_time_axis))
+        attention_weights = tf.nn.softmax(self.V(score), axis=1)
+        context_vector = attention_weights * features
+        context_vector = tf.reduce_sum(context_vector, axis=1)
+        return context_vector, attention_weights
 
 
 class NN:
@@ -11,6 +28,10 @@ class NN:
             self.EMBED_SIZE = embedding_size
             self.RNN_CELL_SIZE = cell_size
             self.METRICS = [
+                keras.metrics.TruePositives(name='tn'),
+                keras.metrics.TrueNegatives(name='tn'),
+                keras.metrics.FalsePositives(name='fp'),
+                keras.metrics.FalseNegatives(name='fn'),
                 keras.metrics.BinaryAccuracy(name='accuracy'),
                 keras.metrics.Precision(name='precision'),
                 keras.metrics.Recall(name='recall'),
@@ -23,11 +44,36 @@ class NN:
 
     def create(self):
         print("=== Generating Attention Based RNN ===")
-        model = Sequential(Embedding(self.MAX_FEATURES, self.EMBED_SIZE, input_length=self.MAX_LEN))
-        model.add(Bidirectional(LSTM(self.RNN_CELL_SIZE, return_sequences=True)))
-        model.add(Attention())
-        model.add(Dropout(0.5))
-        model.add(Dense(1, activation="sigmoid"))
+        sequence_input = Input(shape=(self.MAX_LEN,), dtype="int32")
+        embedded_sequences = Embedding(self.MAX_FEATURES, self.EMBED_SIZE)(sequence_input)
+        lstm = Bidirectional(
+            LSTM(
+                self.RNN_CELL_SIZE,
+                return_sequences=True
+            ),
+            name="bi_lstm"
+        )(embedded_sequences)
+        (
+            lstm,
+            forward_h,
+            forward_c,
+            backward_h,
+            backward_c
+        ) = Bidirectional(
+            LSTM(
+                self.RNN_CELL_SIZE,
+                return_sequences=True,
+                return_state=True
+            ),
+            name="bi_lstm_1"
+        )(lstm)
+        state_h = Concatenate()([forward_h, backward_h])
+        # state_c = Concatenate()([forward_c, backward_c])
+        context_vector, attention_weights = Attention(10)(lstm, state_h)
+        dense1 = Dense(20, activation="relu")(context_vector)
+        dropout = Dropout(0.05)(dense1)
+        output = Dense(1, activation="sigmoid")(dropout)
+        model = keras.Model(inputs=sequence_input, outputs=output)
         print(model.summary())
         keras.utils.plot_model(model, show_shapes=True, dpi=90)
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=self.METRICS)
@@ -130,3 +176,23 @@ class NN:
             else:
                 plt.ylim([0, 1])
             plt.legend()
+
+    def classify_tweets(self, dataset):
+        with open('models/tokenizer.pkl', 'rb') as f:
+            tokenizer = dill.load(f)
+        covid_tweets = pd.read_csv(dataset)
+        tweets = covid_tweets['Text']
+        print(len(tweets))
+        preprocessed_tweets = tweets.apply(clean_text)
+        tokenized_tweets = tokenizer.texts_to_sequences(preprocessed_tweets)
+        padded_tweets = pad_sequences(tokenized_tweets, maxlen=self.MAX_LEN)
+        tweet_classifications = self.model.predict(padded_tweets)
+        predicted_classes = [1 if x >= 0.5 else 0 for x in tweet_classifications]
+        new_tweets_file = covid_tweets.copy()
+        n_new_tweets_file = new_tweets_file.drop(
+            ['Unnamed: 0', 'UserScreenName', 'Comments', 'Likes', 'UserName', 'Timestamp', 'Embedded_text', 'Emojis',
+             'Retweets', 'Image link', 'Tweet URL'], axis=1)
+        n_new_tweets_file['Predictions Scores'] = tweet_classifications
+        n_new_tweets_file['Prediction Label'] = ["Positive" if x == 1 else "Negative" for x in predicted_classes]
+        n_new_tweets_file['Prediction Label'].value_counts()
+        n_new_tweets_file.to_csv("Classification Results.csv")

@@ -11,6 +11,7 @@ def main():
     model.validate(X_TEST, Y_TEST)
     model.plot_metrics(train_history)
     model.save_model(TOKENIZER)
+    model.classify_tweets('data/Covid-19-Tweets.csv')
 
 
 if __name__ == '__main__':

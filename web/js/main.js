@@ -54,9 +54,10 @@ const processData = () => {
   $('#message').html('Please Wait while Engine Processes your data');
   $('#loader').show();
   $('#table').hide();
-  let model = $('select').val();
   let table_data;
   eel.run(fileData.data)(val=> {
+    console.log(val);
+    
     $('#loader').hide();
     $('.upld').show();
     $('#next').hide();

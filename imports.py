@@ -16,7 +16,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 
 import tensorflow as tf
 import tensorflow.keras as keras
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 from keras.layers import Bidirectional
 from keras.models import Model, Sequential
 from keras.preprocessing.text import Tokenizer
@@ -30,7 +30,6 @@ from sklearn.metrics import roc_auc_score
 from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import train_test_split
 
-from attention import Attention
 
-# nltk.download('stopwords')
-# nltk.download('wordnet')
+nltk.download('stopwords')
+nltk.download('wordnet')
